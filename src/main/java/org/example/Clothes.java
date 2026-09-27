@@ -19,18 +19,15 @@ public class Clothes {
      * @param size  розмір одягу (наприклад, L)
      * @param price ціна одягу
      * @param brand бренд одягу
+     * @throws IllegalArgumentException якщо передані некоректні дані
      */
     public Clothes(String type, String size, double price, String brand) {
-        this.type = type;
-        this.size = size;
-        this.price = price;
-        this.brand = brand;
+        setType(type);
+        setSize(size);
+        setPrice(price);
+        setBrand(brand);
     }
 
-    /**
-     * Отримує тип одягу.
-     * @return тип одягу
-     */
     public String getType() {
         return type;
     }
@@ -38,15 +35,15 @@ public class Clothes {
     /**
      * Встановлює тип одягу.
      * @param type тип одягу
+     * @throws IllegalArgumentException якщо рядок порожній або null
      */
     public void setType(String type) {
+        if (type == null || type.trim().isEmpty()) {
+            throw new IllegalArgumentException("Тип одягу не може бути порожнім.");
+        }
         this.type = type;
     }
 
-    /**
-     * Отримує розмір одягу.
-     * @return розмір одягу
-     */
     public String getSize() {
         return size;
     }
@@ -54,15 +51,15 @@ public class Clothes {
     /**
      * Встановлює розмір одягу.
      * @param size розмір одягу
+     * @throws IllegalArgumentException якщо рядок порожній або null
      */
     public void setSize(String size) {
+        if (size == null || size.trim().isEmpty()) {
+            throw new IllegalArgumentException("Розмір одягу не може бути порожнім.");
+        }
         this.size = size;
     }
 
-    /**
-     * Отримує ціну одягу.
-     * @return ціна одягу
-     */
     public double getPrice() {
         return price;
     }
@@ -70,15 +67,15 @@ public class Clothes {
     /**
      * Встановлює ціну одягу.
      * @param price ціна одягу
+     * @throws IllegalArgumentException якщо ціна від'ємна
      */
     public void setPrice(double price) {
+        if (price < 0) {
+            throw new IllegalArgumentException("Ціна не може бути від'ємною.");
+        }
         this.price = price;
     }
 
-    /**
-     * Отримує бренд одягу.
-     * @return бренд одягу
-     */
     public String getBrand() {
         return brand;
     }
@@ -86,8 +83,12 @@ public class Clothes {
     /**
      * Встановлює бренд одягу.
      * @param brand бренд одягу
+     * @throws IllegalArgumentException якщо рядок порожній або null
      */
     public void setBrand(String brand) {
+        if (brand == null || brand.trim().isEmpty()) {
+            throw new IllegalArgumentException("Бренд одягу не може бути порожнім.");
+        }
         this.brand = brand;
     }
 
