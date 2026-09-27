@@ -43,6 +43,11 @@ public class Main {
             if (scanner.hasNextDouble()) {
                 price = scanner.nextDouble();
                 scanner.nextLine();
+
+                if (price < 0) {
+                    System.out.println("Помилка вводу ціни. Ціна не може бути від'ємною. Встановлено 0.0");
+                    price = 0.0;
+                }
             } else {
                 System.out.println("Помилка вводу ціни. Встановлено 0.0");
                 scanner.nextLine();
