@@ -8,7 +8,7 @@ import java.util.Objects;
  */
 public class Clothes {
     private String type;
-    private String size;
+    private ClothesSize size;
     private double price;
     private String brand;
 
@@ -16,24 +16,30 @@ public class Clothes {
      * Конструктор для ініціалізації об'єкта одягу.
      *
      * @param type  тип одягу (наприклад, Футболка)
-     * @param size  розмір одягу (наприклад, L)
+     * @param size  розмір одягу (об'єкт перерахування ClothesSize)
      * @param price ціна одягу
      * @param brand бренд одягу
      * @throws IllegalArgumentException якщо передані некоректні дані
      */
-    public Clothes(String type, String size, double price, String brand) {
+    public Clothes(String type, ClothesSize size, double price, String brand) {
         setType(type);
         setSize(size);
         setPrice(price);
         setBrand(brand);
     }
 
+    /**
+     * Отримує тип одягу.
+     *
+     * @return тип одягу
+     */
     public String getType() {
         return type;
     }
 
     /**
      * Встановлює тип одягу.
+     *
      * @param type тип одягу
      * @throws IllegalArgumentException якщо рядок порожній або null
      */
@@ -44,28 +50,40 @@ public class Clothes {
         this.type = type;
     }
 
-    public String getSize() {
+    /**
+     * Отримує розмір одягу.
+     *
+     * @return розмір одягу (ClothesSize)
+     */
+    public ClothesSize getSize() {
         return size;
     }
 
     /**
      * Встановлює розмір одягу.
+     *
      * @param size розмір одягу
-     * @throws IllegalArgumentException якщо рядок порожній або null
+     * @throws IllegalArgumentException якщо розмір дорівнює null
      */
-    public void setSize(String size) {
-        if (size == null || size.trim().isEmpty()) {
-            throw new IllegalArgumentException("Розмір одягу не може бути порожнім.");
+    public void setSize(ClothesSize size) {
+        if (size == null) {
+            throw new IllegalArgumentException("Розмір одягу не може бути null.");
         }
         this.size = size;
     }
 
+    /**
+     * Отримує ціну одягу.
+     *
+     * @return ціна одягу
+     */
     public double getPrice() {
         return price;
     }
 
     /**
      * Встановлює ціну одягу.
+     *
      * @param price ціна одягу
      * @throws IllegalArgumentException якщо ціна від'ємна
      */
@@ -76,12 +94,18 @@ public class Clothes {
         this.price = price;
     }
 
+    /**
+     * Отримує бренд одягу.
+     *
+     * @return бренд одягу
+     */
     public String getBrand() {
         return brand;
     }
 
     /**
      * Встановлює бренд одягу.
+     *
      * @param brand бренд одягу
      * @throws IllegalArgumentException якщо рядок порожній або null
      */
@@ -92,16 +116,27 @@ public class Clothes {
         this.brand = brand;
     }
 
+    /**
+     * Повертає рядкове представлення об'єкта одягу.
+     *
+     * @return рядок з інформацією про одяг
+     */
     @Override
     public String toString() {
         return "Clothes{" +
                 "type='" + type + '\'' +
-                ", size='" + size + '\'' +
+                ", size=" + size +
                 ", price=" + price +
                 ", brand='" + brand + '\'' +
                 '}';
     }
 
+    /**
+     * Порівнює поточний об'єкт з іншим на рівність.
+     *
+     * @param o інший об'єкт для порівняння
+     * @return true, якщо об'єкти рівні, інакше false
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -109,7 +144,7 @@ public class Clothes {
         Clothes clothes = (Clothes) o;
         return Double.compare(clothes.price, price) == 0 &&
                 Objects.equals(type, clothes.type) &&
-                Objects.equals(size, clothes.size) &&
+                size == clothes.size &&
                 Objects.equals(brand, clothes.brand);
     }
 }
