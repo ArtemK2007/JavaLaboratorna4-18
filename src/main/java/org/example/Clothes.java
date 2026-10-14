@@ -4,7 +4,7 @@ import java.util.Objects;
 
 /**
  * Клас, що описує предмет одягу.
- * Містить інформацію про тип, розмір, ціну та бренд.
+ * Містить інформацію про тип, розмір, ціну, бренд та підраховує кількість створених об'єктів.
  */
 public class Clothes {
     private String type;
@@ -13,7 +13,12 @@ public class Clothes {
     private String brand;
 
     /**
-     * Конструктор для ініціалізації об'єкта одягу.
+     * Статичне поле для підрахунку кількості створених об'єктів класу Clothes.
+     */
+    private static int createdCount = 0;
+
+    /**
+     * Основний конструктор для ініціалізації об'єкта одягу.
      *
      * @param type  тип одягу (наприклад, Футболка)
      * @param size  розмір одягу (об'єкт перерахування ClothesSize)
@@ -26,6 +31,33 @@ public class Clothes {
         setSize(size);
         setPrice(price);
         setBrand(brand);
+        createdCount++;
+    }
+
+    /**
+     * Конструктор копіювання. Створює новий об'єкт на основі існуючого.
+     *
+     * @param other об'єкт класу Clothes, який потрібно скопіювати
+     * @throws IllegalArgumentException якщо переданий об'єкт для копіювання є null
+     */
+    public Clothes(Clothes other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Об'єкт для копіювання не може бути null.");
+        }
+        this.type = other.type;
+        this.size = other.size;
+        this.price = other.price;
+        this.brand = other.brand;
+        createdCount++;
+    }
+
+    /**
+     * Повертає загальну кількість створених об'єктів класу Clothes.
+     *
+     * @return кількість створених об'єктів
+     */
+    public static int getCreatedCount() {
+        return createdCount;
     }
 
     /**
