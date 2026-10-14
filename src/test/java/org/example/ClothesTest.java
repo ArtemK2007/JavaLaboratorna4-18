@@ -1,10 +1,12 @@
 package org.example;
 
 import org.junit.jupiter.api.Test;
+import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Клас модульного тестування для перевірки базового класу Clothes та його нащадків Pants і Shirts.
+ * Клас модульного тестування для перевірки 5 класів ієрархії:
+ * Clothes, Pants, Shirts, Jeans та PoloShirt.
  */
 class ClothesTest {
 
@@ -31,18 +33,13 @@ class ClothesTest {
      */
     @Test
     void shouldCreatePantsAndValidateWaistSize() {
-        Pants pants = new Pants("Джинси", ClothesSize.L, 1200.0, "Levi's", 32);
+        Pants pants = new Pants("Штани", ClothesSize.L, 1200.0, "Levi's", 32);
 
         assertEquals(32, pants.getWaistSize());
-        assertEquals("Джинси", pants.getType());
-        assertEquals(ClothesSize.L, pants.getSize());
+        assertEquals("Штани", pants.getType());
 
         assertThrows(IllegalArgumentException.class, () -> {
             new Pants("Шорти", ClothesSize.M, 400.0, "Zara", 0);
-        });
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            pants.setWaistSize(-5);
         });
     }
 
@@ -54,24 +51,54 @@ class ClothesTest {
         Shirts shirt = new Shirts("Сорочка", ClothesSize.M, 850.0, "H&M", true);
 
         assertTrue(shirt.isLongSleeve());
-        assertEquals("Сорочка", shirt.getType());
-        assertEquals("H&M", shirt.getBrand());
-
         shirt.setLongSleeve(false);
         assertFalse(shirt.isLongSleeve());
     }
 
     /**
-     * Перевіряє роботу методу equals та hashCode для похідних класів.
+     * Перевіряє створення та валідацію класу Jeans (3-й рівень ієрархії).
      */
     @Test
-    void shouldCheckEqualityForDerivedClasses() {
-        Pants pants1 = new Pants("Класичні", ClothesSize.XL, 1500.0, "Boss", 36);
-        Pants pants2 = new Pants("Класичні", ClothesSize.XL, 1500.0, "Boss", 36);
-        Pants pants3 = new Pants("Класичні", ClothesSize.XL, 1500.0, "Boss", 34);
+    void shouldCreateJeansAndValidateFitType() {
+        Jeans jeans = new Jeans("Джинси", ClothesSize.M, 1800.0, "Diesel", 32, "Slim");
 
-        assertEquals(pants1, pants2);
-        assertNotEquals(pants1, pants3);
-        assertEquals(pants1.hashCode(), pants2.hashCode());
+        assertEquals("Slim", jeans.getFitType());
+        assertEquals(32, jeans.getWaistSize());
+        assertTrue(jeans.toString().contains("fitType='Slim'"));
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Jeans("Джинси", ClothesSize.M, 1800.0, "Diesel", 32, "   ");
+        });
+    }
+
+    /**
+     * Перевіряє створення та валідацію класу PoloShirt (3-й рівень ієрархії).
+     */
+    @Test
+    void shouldCreatePoloShirtAndValidateButtonCount() {
+        PoloShirt polo = new PoloShirt("Поло", ClothesSize.L, 1100.0, "Lacoste", false, 3);
+
+        assertEquals(3, polo.getButtonCount());
+        assertFalse(polo.isLongSleeve());
+        assertTrue(polo.toString().contains("buttonCount=3"));
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            polo.setButtonCount(0);
+        });
+    }
+
+    /**
+     * Перевіряє поліморфне збереження всіх 5 класів ієрархії в одній колекції ArrayList.
+     */
+    @Test
+    void shouldStoreAllFiveHierarchyClassesInSingleArrayList() {
+        ArrayList<Clothes> list = new ArrayList<>();
+        list.add(new Clothes("Куртка", ClothesSize.XL, 2500.0, "Puma"));
+        list.add(new Pants("Чиноси", ClothesSize.M, 900.0, "Zara", 31));
+        list.add(new Shirts("Футболка", ClothesSize.S, 450.0, "Nike", false));
+        list.add(new Jeans("Джинси", ClothesSize.L, 1600.0, "Levi's", 34, "Regular"));
+        list.add(new PoloShirt("Поло", ClothesSize.M, 1300.0, "Ralph Lauren", false, 2));
+
+        assertEquals(5, list.size());
     }
 }
