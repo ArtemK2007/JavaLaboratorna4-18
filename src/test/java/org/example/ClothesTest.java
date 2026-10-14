@@ -4,12 +4,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Клас модульного тестування для перевірки класів Clothes та Wardrobe.
+ * Клас модульного тестування для перевірки базового класу Clothes та його нащадків Pants і Shirts.
  */
 class ClothesTest {
 
     /**
-     * Перевіряє кидання винятку при передачі некоректних параметрів у конструктор.
+     * Перевіряє кидання винятку при передачі некоректних параметрів у базовий конструктор.
      */
     @Test
     void shouldThrowExceptionWhenInvalidConstructorData() {
@@ -27,58 +27,51 @@ class ClothesTest {
     }
 
     /**
-     * Перевіряє кидання винятку при передачі некоректних значень у сетери.
+     * Перевіряє коректність створення та валідацію в похідному класі Pants.
      */
     @Test
-    void shouldThrowExceptionWhenInvalidValueInSetter() {
-        Clothes clothes = new Clothes("Куртка", ClothesSize.XL, 1200.0, "Puma");
+    void shouldCreatePantsAndValidateWaistSize() {
+        Pants pants = new Pants("Джинси", ClothesSize.L, 1200.0, "Levi's", 32);
+
+        assertEquals(32, pants.getWaistSize());
+        assertEquals("Джинси", pants.getType());
+        assertEquals(ClothesSize.L, pants.getSize());
 
         assertThrows(IllegalArgumentException.class, () -> {
-            clothes.setPrice(-10.0);
+            new Pants("Шорти", ClothesSize.M, 400.0, "Zara", 0);
         });
 
         assertThrows(IllegalArgumentException.class, () -> {
-            clothes.setType("   ");
-        });
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            clothes.setSize(null);
+            pants.setWaistSize(-5);
         });
     }
 
     /**
-     * Перевіряє роботу конструктора копіювання та статичного лічильника.
+     * Перевіряє коректність створення та роботу полів у похідному класі Shirts.
      */
     @Test
-    void shouldCopyObjectAndIncrementStaticCounter() {
-        int countBefore = Clothes.getCreatedCount();
+    void shouldCreateShirtsAndCheckSleeve() {
+        Shirts shirt = new Shirts("Сорочка", ClothesSize.M, 850.0, "H&M", true);
 
-        Clothes original = new Clothes("Худі", ClothesSize.L, 950.0, "Reebok");
-        Clothes copy = new Clothes(original);
+        assertTrue(shirt.isLongSleeve());
+        assertEquals("Сорочка", shirt.getType());
+        assertEquals("H&M", shirt.getBrand());
 
-        assertEquals(original, copy);
-        assertEquals(countBefore + 2, Clothes.getCreatedCount());
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Clothes(null);
-        });
+        shirt.setLongSleeve(false);
+        assertFalse(shirt.isLongSleeve());
     }
 
     /**
-     * Перевіряє базову роботу класу агрегації Wardrobe.
+     * Перевіряє роботу методу equals та hashCode для похідних класів.
      */
     @Test
-    void shouldAddClothesToWardrobeAndCheckCapacity() {
-        Wardrobe wardrobe = new Wardrobe(1);
-        Clothes item = new Clothes("Кепка", ClothesSize.S, 300.0, "New Era");
+    void shouldCheckEqualityForDerivedClasses() {
+        Pants pants1 = new Pants("Класичні", ClothesSize.XL, 1500.0, "Boss", 36);
+        Pants pants2 = new Pants("Класичні", ClothesSize.XL, 1500.0, "Boss", 36);
+        Pants pants3 = new Pants("Класичні", ClothesSize.XL, 1500.0, "Boss", 34);
 
-        wardrobe.addClothes(item);
-        assertEquals(1, wardrobe.getCurrentCount());
-        assertEquals(item, wardrobe.getClothes(0));
-
-        // Перевірка переповнення гардеробу
-        assertThrows(IllegalStateException.class, () -> {
-            wardrobe.addClothes(new Clothes(item));
-        });
+        assertEquals(pants1, pants2);
+        assertNotEquals(pants1, pants3);
+        assertEquals(pants1.hashCode(), pants2.hashCode());
     }
 }
