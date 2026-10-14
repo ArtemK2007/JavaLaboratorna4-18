@@ -4,18 +4,13 @@ import java.util.Objects;
 
 /**
  * Клас, що описує предмет одягу.
- * Містить інформацію про тип, розмір, ціну, бренд та підраховує кількість створених об'єктів.
+ * Містить інформацію про тип, розмір, ціну та бренд.
  */
 public class Clothes {
     private String type;
     private ClothesSize size;
     private double price;
     private String brand;
-
-    /**
-     * Статичне поле для підрахунку кількості створених об'єктів класу Clothes.
-     */
-    private static int createdCount = 0;
 
     /**
      * Основний конструктор для ініціалізації об'єкта одягу.
@@ -31,7 +26,6 @@ public class Clothes {
         setSize(size);
         setPrice(price);
         setBrand(brand);
-        createdCount++;
     }
 
     /**
@@ -48,16 +42,6 @@ public class Clothes {
         this.size = other.size;
         this.price = other.price;
         this.brand = other.brand;
-        createdCount++;
-    }
-
-    /**
-     * Повертає загальну кількість створених об'єктів класу Clothes.
-     *
-     * @return кількість створених об'єктів
-     */
-    public static int getCreatedCount() {
-        return createdCount;
     }
 
     /**
