@@ -137,7 +137,7 @@ public class Main {
 
     //МЕТОДИ ПОШУКУ
 
-    private static ArrayList<Clothes> searchByBrand(ArrayList<Clothes> list, String brand) {
+    static ArrayList<Clothes> searchByBrand(ArrayList<Clothes> list, String brand) {
         ArrayList<Clothes> result = new ArrayList<>();
         for (Clothes item : list) {
             if (item.getBrand().equalsIgnoreCase(brand)) {
@@ -147,7 +147,7 @@ public class Main {
         return result;
     }
 
-    private static ArrayList<Clothes> searchBySize(ArrayList<Clothes> list, ClothesSize size) {
+    static ArrayList<Clothes> searchBySize(ArrayList<Clothes> list, ClothesSize size) {
         ArrayList<Clothes> result = new ArrayList<>();
         for (Clothes item : list) {
             if (item.getSize() == size) {
@@ -157,7 +157,7 @@ public class Main {
         return result;
     }
 
-    private static ArrayList<Clothes> searchByPriceRange(ArrayList<Clothes> list, double min, double max) {
+    static ArrayList<Clothes> searchByPriceRange(ArrayList<Clothes> list, double min, double max) {
         ArrayList<Clothes> result = new ArrayList<>();
         for (Clothes item : list) {
             if (item.getPrice() >= min && item.getPrice() <= max) {

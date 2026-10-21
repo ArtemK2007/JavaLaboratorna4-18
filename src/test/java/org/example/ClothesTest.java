@@ -94,6 +94,34 @@ class ClothesTest {
         new File(testFileName).delete();
     }
 
+    //ТЕСТИ ДЛЯ ПОШУКУ (ЛАБА 10)
+
+    @Test
+    void shouldSearchByBrand() {
+        ArrayList<Clothes> list = createTestList();
+        ArrayList<Clothes> result = Main.searchByBrand(list, "Nike");
+        assertEquals(1, result.size());
+        assertEquals("Nike", result.get(0).getBrand());
+    }
+
+    @Test
+    void shouldSearchBySize() {
+        ArrayList<Clothes> list = createTestList();
+        ArrayList<Clothes> result = Main.searchBySize(list, ClothesSize.M);
+        assertEquals(2, result.size());
+        assertEquals(ClothesSize.M, result.get(0).getSize());
+        assertEquals(ClothesSize.M, result.get(1).getSize());
+    }
+
+    @Test
+    void shouldSearchByPriceRange() {
+        ArrayList<Clothes> list = createTestList();
+        ArrayList<Clothes> result = Main.searchByPriceRange(list, 1000.0, 2000.0);
+        assertEquals(2, result.size());
+        assertTrue(result.get(0).getPrice() >= 1000.0 && result.get(0).getPrice() <= 2000.0);
+        assertTrue(result.get(1).getPrice() >= 1000.0 && result.get(1).getPrice() <= 2000.0);
+    }
+
     private ArrayList<Clothes> createTestList() {
         ArrayList<Clothes> list = new ArrayList<>();
         list.add(new Clothes("Куртка", ClothesSize.XL, 2500.0, "Puma"));
