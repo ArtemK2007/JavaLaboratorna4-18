@@ -104,16 +104,30 @@ public class FileStorage {
                 int qty = obj.has("quantity") ? obj.get("quantity").getAsInt() : 1;
 
                 JsonObject itemObj = obj.has("item") ? obj.getAsJsonObject("item") : null;
-                if (itemObj != null && itemObj.has("classType")) {
-                    String classType = itemObj.get("classType").getAsString();
+                if (itemObj != null) {
                     Clothes clothes = null;
                     try {
-                        switch (classType) {
-                            case "PoloShirt": clothes = gson.fromJson(itemObj, PoloShirt.class); break;
-                            case "Jeans":     clothes = gson.fromJson(itemObj, Jeans.class); break;
-                            case "Shirts":    clothes = gson.fromJson(itemObj, Shirts.class); break;
-                            case "Pants":     clothes = gson.fromJson(itemObj, Pants.class); break;
+                        if (itemObj.has("classType")) {
+                            String classType = itemObj.get("classType").getAsString();
+                            switch (classType) {
+                                case "PoloShirt": clothes = gson.fromJson(itemObj, PoloShirt.class); break;
+                                case "Jeans":     clothes = gson.fromJson(itemObj, Jeans.class); break;
+                                case "Shirts":    clothes = gson.fromJson(itemObj, Shirts.class); break;
+                                case "Pants":     clothes = gson.fromJson(itemObj, Pants.class); break;
+                                case "Clothes":   clothes = gson.fromJson(itemObj, Shirts.class); break;
+                            }
+                        } else if (itemObj.has("buttonCount")) {
+                            clothes = gson.fromJson(itemObj, PoloShirt.class);
+                        } else if (itemObj.has("fitType")) {
+                            clothes = gson.fromJson(itemObj, Jeans.class);
+                        } else if (itemObj.has("waistSize")) {
+                            clothes = gson.fromJson(itemObj, Pants.class);
+                        } else if (itemObj.has("longSleeve") || itemObj.has("isLongSleeve")) {
+                            clothes = gson.fromJson(itemObj, Shirts.class);
+                        } else {
+                            clothes = gson.fromJson(itemObj, Shirts.class);
                         }
+
                         if (clothes != null) {
                             store.addNewClothes(clothes, qty);
                         }

@@ -10,8 +10,8 @@ class ClothesTest {
     @Test
     void shouldThrowExceptionWhenInvalidConstructorData() {
         assertThrows(IllegalArgumentException.class, () -> new Shirts("Футболка", ClothesSize.M, -150.0, "Nike", false));
-        assertThrows(IllegalArgumentException.class, () -> new Pants("Штани", null, 500.0, "Adidas", 32));
-        assertThrows(IllegalArgumentException.class, () -> new Pants("Штани", ClothesSize.L, 500.0, "", 32));
+        assertThrows(IllegalArgumentException.class, () -> new Pants("", ClothesSize.L, 500.0, "Adidas", 32));
+        assertThrows(IllegalArgumentException.class, () -> new Pants(null, ClothesSize.L, 500.0, "Zara", 32));
     }
 
     @Test
