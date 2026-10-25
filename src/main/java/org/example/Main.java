@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class Main {
 
     static void main() {
-        Store store = new Store("Магазин Одягу Clothes");
+        Store store = new Store("Магазин Одягу WinWin");
 
         FileStorage.loadFromJson(store, "input.json");
         if (store.getInventory().isEmpty()) {
@@ -27,7 +27,8 @@ public class Main {
             System.out.println("1. Пошук товару");
             System.out.println("2. Додати новий товар (надходження на склад)");
             System.out.println("3. Вивести весь інвентар");
-            System.out.println("4. Завершити роботу програми (із збереженням)");
+            System.out.println("4. Вивести відсортовану інформацію про всі товари (за ціною)");
+            System.out.println("5. Завершити роботу програми (із збереженням)");
             System.out.print("Оберіть пункт меню: ");
 
             String choice = scanner.nextLine().trim();
@@ -36,11 +37,9 @@ public class Main {
                 case "1":
                     handleSearchMenu(scanner, store);
                     break;
-
                 case "2":
                     handleCreateMenu(scanner, store);
                     break;
-
                 case "3":
                     if (store.getInventory().isEmpty()) {
                         System.out.println("Склад порожній.");
@@ -51,16 +50,28 @@ public class Main {
                         }
                     }
                     break;
-
                 case "4":
+                    if (store.getInventory().isEmpty()) {
+                        System.out.println("Склад порожній. Немає що сортувати.");
+                    } else {
+                        System.out.println("\n=== ВІДСОРТОВАНИЙ ІНВЕНТАР (За ціною) ===");
+                        ArrayList<StoreItem> sortedList = new ArrayList<>(store.getInventory());
+
+                        sortedList.sort((item1, item2) -> item1.getItem().compareTo(item2.getItem()));
+
+                        for (int i = 0; i < sortedList.size(); i++) {
+                            System.out.println((i + 1) + ". " + sortedList.get(i).toString());
+                        }
+                    }
+                    break;
+                case "5":
                     FileStorage.saveToTxt(store, "input.txt");
                     FileStorage.saveToJson(store, "input.json");
                     System.out.println("Дані успішно збережено. Завершення роботи програми...");
                     running = false;
                     break;
-
                 default:
-                    System.out.println("Некоректний вибір. Будь ласка, введіть число від 1 до 4.");
+                    System.out.println("Некоректний вибір. Будь ласка, введіть число від 1 до 5.");
                     break;
             }
         }
@@ -128,11 +139,10 @@ public class Main {
 
     private static void handleCreateMenu(Scanner scanner, Store store) {
         System.out.println("\n--- Оберіть тип об'єкта для створення ---");
-        System.out.println("1. Базовий одяг (Clothes)");
-        System.out.println("2. Штани (Pants)");
-        System.out.println("3. Сорочка / Футболка (Shirts)");
-        System.out.println("4. Джинси (Jeans)");
-        System.out.println("5. Сорочка-поло (PoloShirt)");
+        System.out.println("1. Штани (Pants)");
+        System.out.println("2. Сорочка / Футболка (Shirts)");
+        System.out.println("3. Джинси (Jeans)");
+        System.out.println("4. Сорочка-поло (PoloShirt)");
         System.out.println("0. Повернутися до головного меню");
         System.out.print("Ваш вибір: ");
 
@@ -143,27 +153,24 @@ public class Main {
             Clothes newItem;
             switch (typeChoice) {
                 case "1":
-                    newItem = readBaseClothesData(scanner);
+                    String[] baseP = readBaseClothesData(scanner, "Штани");
+                    newItem = new Pants(baseP[0], ClothesSize.valueOf(baseP[1]), Double.parseDouble(baseP[2]), baseP[3], readWaistSize(scanner));
                     break;
                 case "2":
-                    Clothes baseP = readBaseClothesData(scanner);
-                    newItem = new Pants(baseP.getType(), baseP.getSize(), baseP.getPrice(), baseP.getBrand(), readWaistSize(scanner));
+                    String[] baseS = readBaseClothesData(scanner, "Сорочка");
+                    newItem = new Shirts(baseS[0], ClothesSize.valueOf(baseS[1]), Double.parseDouble(baseS[2]), baseS[3], readLongSleeve(scanner));
                     break;
                 case "3":
-                    Clothes baseS = readBaseClothesData(scanner);
-                    newItem = new Shirts(baseS.getType(), baseS.getSize(), baseS.getPrice(), baseS.getBrand(), readLongSleeve(scanner));
-                    break;
-                case "4":
-                    Clothes baseJ = readBaseClothesData(scanner);
+                    String[] baseJ = readBaseClothesData(scanner, "Джинси");
                     int waistJ = readWaistSize(scanner);
                     System.out.print("Введіть тип крою джинсів (Slim, Regular, Wide): ");
-                    newItem = new Jeans(baseJ.getType(), baseJ.getSize(), baseJ.getPrice(), baseJ.getBrand(), waistJ, scanner.nextLine());
+                    newItem = new Jeans(baseJ[0], ClothesSize.valueOf(baseJ[1]), Double.parseDouble(baseJ[2]), baseJ[3], waistJ, scanner.nextLine());
                     break;
-                case "5":
-                    Clothes basePo = readBaseClothesData(scanner);
+                case "4":
+                    String[] basePo = readBaseClothesData(scanner, "Поло");
                     boolean longSleevePo = readLongSleeve(scanner);
                     System.out.print("Введіть кількість ґудзиків на комірці: ");
-                    newItem = new PoloShirt(basePo.getType(), basePo.getSize(), basePo.getPrice(), basePo.getBrand(), longSleevePo, Integer.parseInt(scanner.nextLine().trim()));
+                    newItem = new PoloShirt(basePo[0], ClothesSize.valueOf(basePo[1]), Double.parseDouble(basePo[2]), basePo[3], longSleevePo, Integer.parseInt(scanner.nextLine().trim()));
                     break;
                 default:
                     System.out.println("Невідомий тип об'єкта.");
@@ -172,6 +179,7 @@ public class Main {
 
             System.out.print("Введіть кількість одиниць для додавання на склад: ");
             int quantity = Integer.parseInt(scanner.nextLine().trim());
+
             store.addNewClothes(newItem, quantity);
             System.out.println("Товар успішно додано / оновлено на складі!");
 
@@ -182,16 +190,21 @@ public class Main {
         }
     }
 
-    private static Clothes readBaseClothesData(Scanner scanner) {
-        System.out.print("Назва / тип виробу: ");
-        String type = scanner.nextLine();
+    private static String[] readBaseClothesData(Scanner scanner, String defaultType) {
+        System.out.print("Назва / тип виробу (Enter для '" + defaultType + "'): ");
+        String type = scanner.nextLine().trim();
+        if (type.isEmpty()) type = defaultType;
+
         System.out.print("Розмір (XS, S, M, L, XL, XXL): ");
-        ClothesSize size = ClothesSize.valueOf(scanner.nextLine().trim().toUpperCase());
-        System.out.print("Бренд: ");
-        String brand = scanner.nextLine();
+        String size = scanner.nextLine().trim().toUpperCase();
+
         System.out.print("Ціна: ");
-        double price = Double.parseDouble(scanner.nextLine().trim());
-        return new Clothes(type, size, price, brand);
+        String price = scanner.nextLine().trim();
+
+        System.out.print("Бренд: ");
+        String brand = scanner.nextLine().trim();
+
+        return new String[]{type, size, price, brand};
     }
 
     private static int readWaistSize(Scanner scanner) {
