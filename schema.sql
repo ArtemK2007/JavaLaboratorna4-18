@@ -7,5 +7,6 @@ CREATE TABLE IF NOT EXISTS clothes_inventory (
     waist_size INT,
     is_long_sleeve BOOLEAN,
     fit_type VARCHAR(50),
-    button_count INT
+    button_count INT,
+    quantity INT DEFAULT 1
 );

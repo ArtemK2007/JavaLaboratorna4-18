@@ -178,7 +178,7 @@ public class Main {
             store.addNewClothes(newItem, quantity);
             System.out.println("Товар успішно додано / оновлено на складі!");
 
-            dbManager.saveClothes(newItem);
+            dbManager.saveClothes(newItem, quantity);
 
         } catch (NumberFormatException e) {
             System.out.println("Помилка: Числові дані введені некоректно!");

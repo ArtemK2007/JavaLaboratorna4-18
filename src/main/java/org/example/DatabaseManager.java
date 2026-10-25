@@ -27,7 +27,8 @@ public class DatabaseManager {
     }
 
     private void initializeDatabase() {
-        String sql = "CREATE TABLE IF NOT EXISTS clothes_inventory (" +
+        //noinspection SqlNoDataSourceInspection,SqlResolve
+        String createSql = "CREATE TABLE IF NOT EXISTS clothes_inventory (" +
                 "id SERIAL PRIMARY KEY, " +
                 "type VARCHAR(50) NOT NULL, " +
                 "size VARCHAR(10) NOT NULL, " +
@@ -36,20 +37,24 @@ public class DatabaseManager {
                 "waist_size INT, " +
                 "is_long_sleeve BOOLEAN, " +
                 "fit_type VARCHAR(50), " +
-                "button_count INT)";
+                "button_count INT, " +
+                "quantity INT DEFAULT 1)";
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute(sql);
+            stmt.execute(createSql);
+
+            //noinspection SqlNoDataSourceInspection,SqlResolve
+            stmt.execute("ALTER TABLE clothes_inventory ADD COLUMN IF NOT EXISTS quantity INT DEFAULT 1");
         } catch (SQLException e) {
             System.out.println("Помилка ініціалізації таблиці: " + e.getMessage());
         }
     }
 
-    public void saveClothes(Clothes item) {
+    public void saveClothes(Clothes item, int quantity) {
         if (connection == null) return;
 
         //noinspection SqlNoDataSourceInspection,SqlResolve
-        String sql = "INSERT INTO clothes_inventory (type, size, price, brand, waist_size, is_long_sleeve, fit_type, button_count) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO clothes_inventory (type, size, price, brand, waist_size, is_long_sleeve, fit_type, button_count, quantity) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, item.getClass().getSimpleName());
@@ -77,8 +82,10 @@ public class DatabaseManager {
                 pstmt.setInt(8, ((PoloShirt) item).getButtonCount());
             }
 
+            pstmt.setInt(9, quantity);
+
             pstmt.executeUpdate();
-            System.out.println("-> Об'єкт успішно збережено в базу даних!");
+            System.out.println("-> Об'єкт успішно збережено в базу даних (Кількість: " + quantity + " шт.)!");
         } catch (SQLException e) {
             System.out.println("Помилка збереження об'єкта в БД: " + e.getMessage());
         }
@@ -120,7 +127,8 @@ public class DatabaseManager {
                 }
 
                 if (item != null) {
-                    store.addNewClothes(item, 1);
+                    int qty = rs.getInt("quantity");
+                    store.addNewClothes(item, qty);
                 }
             }
             System.out.println("-> Дані успішно завантажено з бази даних PostgreSQL!");
