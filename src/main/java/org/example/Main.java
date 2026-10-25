@@ -54,13 +54,35 @@ public class Main {
                     if (store.getInventory().isEmpty()) {
                         System.out.println("Склад порожній. Немає що сортувати.");
                     } else {
-                        System.out.println("\n=== ВІДСОРТОВАНИЙ ІНВЕНТАР (За ціною) ===");
-                        ArrayList<StoreItem> sortedList = new ArrayList<>(store.getInventory());
+                        boolean sortingMenu = true;
+                        while (sortingMenu) {
+                            System.out.println("\n--- Оберіть критерій сортування ---");
+                            System.out.println("1. Сортувати за ціною (зростанням)");
+                            System.out.println("0. Повернутися в головне меню");
+                            System.out.print("Ваш вибір: ");
 
-                        sortedList.sort((item1, item2) -> item1.getItem().compareTo(item2.getItem()));
+                            String sortChoice = scanner.nextLine().trim();
+                            ArrayList<StoreItem> sortedList = new ArrayList<>(store.getInventory());
 
-                        for (int i = 0; i < sortedList.size(); i++) {
-                            System.out.println((i + 1) + ". " + sortedList.get(i).toString());
+                            switch (sortChoice) {
+                                case "1":
+                                    sortedList.sort(new java.util.Comparator<StoreItem>() {
+                                        @Override
+                                        public int compare(StoreItem o1, StoreItem o2) {
+                                            return Double.compare(o1.getItem().getPrice(), o2.getItem().getPrice());
+                                        }
+                                    });
+                                    System.out.println("\n=== ВІДСОРТОВАНИЙ ІНВЕНТАР (За ціною) ===");
+                                    for (int i = 0; i < sortedList.size(); i++) {
+                                        System.out.println((i + 1) + ". " + sortedList.get(i).toString());
+                                    }
+                                    break;
+                                case "0":
+                                    sortingMenu = false;
+                                    break;
+                                default:
+                                    System.out.println("Некоректний вибір. Спробуйте ще раз.");
+                            }
                         }
                     }
                     break;
