@@ -58,6 +58,8 @@ public class Main {
                         while (sortingMenu) {
                             System.out.println("\n--- Оберіть критерій сортування ---");
                             System.out.println("1. Сортувати за ціною (зростанням)");
+                            System.out.println("2. Сортувати за брендом (алфавітом)");
+                            System.out.println("3. Сортувати за типом товару");
                             System.out.println("0. Повернутися в головне меню");
                             System.out.print("Ваш вибір: ");
 
@@ -72,14 +74,33 @@ public class Main {
                                             return Double.compare(o1.getItem().getPrice(), o2.getItem().getPrice());
                                         }
                                     });
-                                    System.out.println("\n=== ВІДСОРТОВАНИЙ ІНВЕНТАР (За ціною) ===");
-                                    for (int i = 0; i < sortedList.size(); i++) {
-                                        System.out.println((i + 1) + ". " + sortedList.get(i).toString());
-                                    }
+                                    printList(sortedList, "За ціною");
                                     break;
+
+                                case "2":
+                                    sortedList.sort(new java.util.Comparator<StoreItem>() {
+                                        @Override
+                                        public int compare(StoreItem o1, StoreItem o2) {
+                                            return o1.getItem().getBrand().compareTo(o2.getItem().getBrand());
+                                        }
+                                    });
+                                    printList(sortedList, "За брендом");
+                                    break;
+
+                                case "3":
+                                    sortedList.sort(new java.util.Comparator<StoreItem>() {
+                                        @Override
+                                        public int compare(StoreItem o1, StoreItem o2) {
+                                            return o1.getItem().getType().compareTo(o2.getItem().getType());
+                                        }
+                                    });
+                                    printList(sortedList, "За типом");
+                                    break;
+
                                 case "0":
                                     sortingMenu = false;
                                     break;
+
                                 default:
                                     System.out.println("Некоректний вибір. Спробуйте ще раз.");
                             }
@@ -237,5 +258,12 @@ public class Main {
     private static boolean readLongSleeve(Scanner scanner) {
         System.out.print("Чи є довгий рукав? (true/false): ");
         return Boolean.parseBoolean(scanner.nextLine().trim());
+    }
+
+    private static void printList(ArrayList<StoreItem> list, String title) {
+        System.out.println("\n=== ВІДСОРТОВАНИЙ ІНВЕНТАР (" + title + ") ===");
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println((i + 1) + ". " + list.get(i).toString());
+        }
     }
 }
