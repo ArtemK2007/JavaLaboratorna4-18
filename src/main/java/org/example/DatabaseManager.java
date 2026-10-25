@@ -83,4 +83,50 @@ public class DatabaseManager {
             System.out.println("Помилка збереження об'єкта в БД: " + e.getMessage());
         }
     }
+
+    public void loadClothes(Store store) {
+        if (connection == null) return;
+
+        //noinspection SqlNoDataSourceInspection,SqlResolve
+        String sql = "SELECT * FROM clothes_inventory";
+
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                String classType = rs.getString("type");
+                ClothesSize size = ClothesSize.valueOf(rs.getString("size"));
+                double price = rs.getDouble("price");
+                String brand = rs.getString("brand");
+
+                Clothes item = null;
+
+                switch (classType) {
+                    case "Pants":
+                        item = new Pants("Штани", size, price, brand, rs.getInt("waist_size"));
+                        break;
+                    case "Shirts":
+                        item = new Shirts("Сорочка", size, price, brand, rs.getBoolean("is_long_sleeve"));
+                        break;
+                    case "Jeans":
+                        item = new Jeans("Джинси", size, price, brand, rs.getInt("waist_size"), rs.getString("fit_type"));
+                        break;
+                    case "PoloShirt":
+                        item = new PoloShirt("Поло", size, price, brand, rs.getBoolean("is_long_sleeve"), rs.getInt("button_count"));
+                        break;
+                    case "Clothes":
+                        item = new Clothes("Одяг", size, price, brand);
+                        break;
+                }
+
+                if (item != null) {
+                    store.addNewClothes(item, 1);
+                }
+            }
+            System.out.println("-> Дані успішно завантажено з бази даних PostgreSQL!");
+
+        } catch (SQLException | IllegalArgumentException e) {
+            System.out.println("Помилка завантаження даних з БД: " + e.getMessage());
+        }
+    }
 }

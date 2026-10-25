@@ -17,10 +17,7 @@ public class Main {
 
         Store store = new Store("Магазин Одягу WinWin");
 
-        FileStorage.loadFromJson(store, "input.json");
-        if (store.getInventory().isEmpty()) {
-            FileStorage.loadFromTxt(store, "input.txt");
-        }
+        dbManager.loadClothes(store);
 
         if (!store.getInventory().isEmpty()) {
             System.out.println("Успішно завантажено інвентар. Унікальних позицій: " + store.getInventory().size());
