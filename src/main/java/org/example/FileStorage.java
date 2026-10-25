@@ -68,10 +68,6 @@ public class FileStorage {
                             clothes = new Pants(type, size, price, brand, Integer.parseInt(p[5]));
                             qty = Integer.parseInt(p[6]);
                             break;
-                        case "Clothes":
-                            clothes = new Clothes(type, size, price, brand);
-                            qty = Integer.parseInt(p[5]);
-                            break;
                     }
                     if (clothes != null) {
                         store.addNewClothes(clothes, qty);
@@ -117,7 +113,6 @@ public class FileStorage {
                             case "Jeans":     clothes = gson.fromJson(itemObj, Jeans.class); break;
                             case "Shirts":    clothes = gson.fromJson(itemObj, Shirts.class); break;
                             case "Pants":     clothes = gson.fromJson(itemObj, Pants.class); break;
-                            case "Clothes":   clothes = gson.fromJson(itemObj, Clothes.class); break;
                         }
                         if (clothes != null) {
                             store.addNewClothes(clothes, qty);

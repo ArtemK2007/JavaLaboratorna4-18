@@ -9,9 +9,9 @@ class ClothesTest {
 
     @Test
     void shouldThrowExceptionWhenInvalidConstructorData() {
-        assertThrows(IllegalArgumentException.class, () -> new Clothes("Футболка", ClothesSize.M, -150.0, "Nike"));
-        assertThrows(IllegalArgumentException.class, () -> new Clothes("Штани", null, 500.0, "Adidas"));
-        assertThrows(IllegalArgumentException.class, () -> new Clothes("Штани", ClothesSize.L, 500.0, ""));
+        assertThrows(IllegalArgumentException.class, () -> new Shirts("Футболка", ClothesSize.M, -150.0, "Nike", false));
+        assertThrows(IllegalArgumentException.class, () -> new Pants("Штани", null, 500.0, "Adidas", 32));
+        assertThrows(IllegalArgumentException.class, () -> new Pants("Штани", ClothesSize.L, 500.0, "", 32));
     }
 
     @Test
@@ -112,7 +112,7 @@ class ClothesTest {
 
     private Store createTestStore() {
         Store store = new Store("Test Store");
-        store.addNewClothes(new Clothes("Куртка", ClothesSize.XL, 2500.0, "Puma"), 2);
+        store.addNewClothes(new Shirts("Куртка", ClothesSize.XL, 2500.0, "Puma", true), 2);
         store.addNewClothes(new Pants("Чиноси", ClothesSize.M, 900.0, "Zara", 31), 4);
         store.addNewClothes(new Shirts("Футболка", ClothesSize.S, 450.0, "Nike", false), 10);
         store.addNewClothes(new Jeans("Джинси", ClothesSize.L, 1600.0, "Levi's", 34, "Regular"), 5);
