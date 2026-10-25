@@ -5,8 +5,17 @@ import java.util.Scanner;
 
 public class Main {
 
-    static void main() {
-        Store store = new Store("Магазин Одягу Clothes");
+    static void main(String[] args) {
+        if (args.length == 0) {
+            System.out.println("ПОМИЛКА: Не вказано шлях до конфігураційного файлу!");
+            System.out.println("Будь ласка, передайте шлях до app.properties через аргументи командного рядка.");
+            return;
+        }
+
+        String propertiesPath = args[0];
+        DatabaseManager dbManager = new DatabaseManager(propertiesPath);
+
+        Store store = new Store("Магазин Одягу WinWin");
 
         FileStorage.loadFromJson(store, "input.json");
         if (store.getInventory().isEmpty()) {
@@ -36,11 +45,9 @@ public class Main {
                 case "1":
                     handleSearchMenu(scanner, store);
                     break;
-
                 case "2":
-                    handleCreateMenu(scanner, store);
+                    handleCreateMenu(scanner, store, dbManager);
                     break;
-
                 case "3":
                     if (store.getInventory().isEmpty()) {
                         System.out.println("Склад порожній.");
@@ -51,14 +58,12 @@ public class Main {
                         }
                     }
                     break;
-
                 case "4":
                     FileStorage.saveToTxt(store, "input.txt");
                     FileStorage.saveToJson(store, "input.json");
                     System.out.println("Дані успішно збережено. Завершення роботи програми...");
                     running = false;
                     break;
-
                 default:
                     System.out.println("Некоректний вибір. Будь ласка, введіть число від 1 до 4.");
                     break;
@@ -126,7 +131,7 @@ public class Main {
         }
     }
 
-    private static void handleCreateMenu(Scanner scanner, Store store) {
+    private static void handleCreateMenu(Scanner scanner, Store store, DatabaseManager dbManager) {
         System.out.println("\n--- Оберіть тип об'єкта для створення ---");
         System.out.println("1. Базовий одяг (Clothes)");
         System.out.println("2. Штани (Pants)");
@@ -172,8 +177,11 @@ public class Main {
 
             System.out.print("Введіть кількість одиниць для додавання на склад: ");
             int quantity = Integer.parseInt(scanner.nextLine().trim());
+
             store.addNewClothes(newItem, quantity);
             System.out.println("Товар успішно додано / оновлено на складі!");
+
+            dbManager.saveClothes(newItem);
 
         } catch (NumberFormatException e) {
             System.out.println("Помилка: Числові дані введені некоректно!");
