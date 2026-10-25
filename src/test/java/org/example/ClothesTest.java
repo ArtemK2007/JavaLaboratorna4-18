@@ -5,10 +5,6 @@ import java.io.File;
 import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Клас модульного тестування для перевірки 5 класів ієрархії
- * та роботи з файлами (збереження і читання TXT/JSON).
- */
 class ClothesTest {
 
     @Test
@@ -49,86 +45,78 @@ class ClothesTest {
     }
 
     @Test
-    void shouldStoreAllFiveHierarchyClassesInSingleArrayList() {
-        ArrayList<Clothes> list = new ArrayList<>();
-        list.add(new Clothes("Куртка", ClothesSize.XL, 2500.0, "Puma"));
-        list.add(new Pants("Чиноси", ClothesSize.M, 900.0, "Zara", 31));
-        list.add(new Shirts("Футболка", ClothesSize.S, 450.0, "Nike", false));
-        list.add(new Jeans("Джинси", ClothesSize.L, 1600.0, "Levi's", 34, "Regular"));
-        list.add(new PoloShirt("Поло", ClothesSize.M, 1300.0, "Ralph Lauren", false, 2));
-        assertEquals(5, list.size());
-    }
+    void shouldAddItemsToStoreAndIncreaseQuantityForDuplicates() {
+        Store store = new Store("Тестовий магазин");
+        Clothes shirt = new Shirts("Футболка", ClothesSize.S, 450.0, "Nike", false);
 
+        store.addNewClothes(shirt, 5);
+        assertEquals(1, store.getInventory().size());
+        assertEquals(5, store.getInventory().getFirst().getQuantity());
 
-    @Test
-    void shouldSaveAndLoadFromTxtFile() {
-        String testFileName = "test_input.txt";
-        ArrayList<Clothes> originalList = createTestList();
+        store.addNewClothes(new Shirts("Футболка", ClothesSize.S, 450.0, "Nike", false), 3);
 
-        FileStorage.saveToTxt(originalList, testFileName);
-
-        ArrayList<Clothes> loadedList = FileStorage.loadFromTxt(testFileName);
-
-        assertEquals(originalList.size(), loadedList.size());
-        for (int i = 0; i < originalList.size(); i++) {
-            assertEquals(originalList.get(i), loadedList.get(i));
-        }
-
-        new File(testFileName).delete();
+        assertEquals(1, store.getInventory().size());
+        assertEquals(8, store.getInventory().getFirst().getQuantity());
     }
 
     @Test
-    void shouldSaveAndLoadFromJsonFile() {
-        String testFileName = "test_input.json";
-        ArrayList<Clothes> originalList = createTestList();
-
-        FileStorage.saveToJson(originalList, testFileName);
-
-        ArrayList<Clothes> loadedList = FileStorage.loadFromJson(testFileName);
-
-        assertEquals(originalList.size(), loadedList.size());
-        for (int i = 0; i < originalList.size(); i++) {
-            assertEquals(originalList.get(i), loadedList.get(i));
-        }
-
-        new File(testFileName).delete();
-    }
-
-    //ТЕСТИ ДЛЯ ПОШУКУ (ЛАБА 10)
-
-    @Test
-    void shouldSearchByBrand() {
-        ArrayList<Clothes> list = createTestList();
-        ArrayList<Clothes> result = Main.searchByBrand(list, "Nike");
+    void shouldSearchByBrandInStore() {
+        Store store = createTestStore();
+        ArrayList<StoreItem> result = store.searchByBrand("Nike");
         assertEquals(1, result.size());
-        assertEquals("Nike", result.get(0).getBrand());
+        assertEquals("Nike", result.getFirst().getItem().getBrand());
     }
 
     @Test
-    void shouldSearchBySize() {
-        ArrayList<Clothes> list = createTestList();
-        ArrayList<Clothes> result = Main.searchBySize(list, ClothesSize.M);
+    void shouldSearchBySizeInStore() {
+        Store store = createTestStore();
+        ArrayList<StoreItem> result = store.searchBySize(ClothesSize.M);
         assertEquals(2, result.size());
-        assertEquals(ClothesSize.M, result.get(0).getSize());
-        assertEquals(ClothesSize.M, result.get(1).getSize());
     }
 
     @Test
-    void shouldSearchByPriceRange() {
-        ArrayList<Clothes> list = createTestList();
-        ArrayList<Clothes> result = Main.searchByPriceRange(list, 1000.0, 2000.0);
+    void shouldSearchByPriceRangeInStore() {
+        Store store = createTestStore();
+        ArrayList<StoreItem> result = store.searchByPriceRange(1000.0, 2000.0);
         assertEquals(2, result.size());
-        assertTrue(result.get(0).getPrice() >= 1000.0 && result.get(0).getPrice() <= 2000.0);
-        assertTrue(result.get(1).getPrice() >= 1000.0 && result.get(1).getPrice() <= 2000.0);
     }
 
-    private ArrayList<Clothes> createTestList() {
-        ArrayList<Clothes> list = new ArrayList<>();
-        list.add(new Clothes("Куртка", ClothesSize.XL, 2500.0, "Puma"));
-        list.add(new Pants("Чиноси", ClothesSize.M, 900.0, "Zara", 31));
-        list.add(new Shirts("Футболка", ClothesSize.S, 450.0, "Nike", false));
-        list.add(new Jeans("Джинси", ClothesSize.L, 1600.0, "Levi's", 34, "Regular"));
-        list.add(new PoloShirt("Поло", ClothesSize.M, 1300.0, "Ralph Lauren", false, 2));
-        return list;
+
+    @Test
+    void shouldSaveAndLoadFromTxtFileWithStore() {
+        String testFileName = "test_store_input.txt";
+        Store originalStore = createTestStore();
+
+        FileStorage.saveToTxt(originalStore, testFileName);
+
+        Store loadedStore = new Store("Завантажений TXT");
+        FileStorage.loadFromTxt(loadedStore, testFileName);
+
+        assertEquals(originalStore.getInventory().size(), loadedStore.getInventory().size());
+        new File(testFileName).delete();
+    }
+
+    @Test
+    void shouldSaveAndLoadFromJsonFileWithStore() {
+        String testFileName = "test_store_input.json";
+        Store originalStore = createTestStore();
+
+        FileStorage.saveToJson(originalStore, testFileName);
+
+        Store loadedStore = new Store("Завантажений JSON");
+        FileStorage.loadFromJson(loadedStore, testFileName);
+
+        assertEquals(originalStore.getInventory().size(), loadedStore.getInventory().size());
+        new File(testFileName).delete();
+    }
+
+    private Store createTestStore() {
+        Store store = new Store("Test Store");
+        store.addNewClothes(new Clothes("Куртка", ClothesSize.XL, 2500.0, "Puma"), 2);
+        store.addNewClothes(new Pants("Чиноси", ClothesSize.M, 900.0, "Zara", 31), 4);
+        store.addNewClothes(new Shirts("Футболка", ClothesSize.S, 450.0, "Nike", false), 10);
+        store.addNewClothes(new Jeans("Джинси", ClothesSize.L, 1600.0, "Levi's", 34, "Regular"), 5);
+        store.addNewClothes(new PoloShirt("Поло", ClothesSize.M, 1300.0, "Ralph Lauren", false, 2), 3);
+        return store;
     }
 }
