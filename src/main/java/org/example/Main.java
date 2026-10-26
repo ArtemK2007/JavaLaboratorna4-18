@@ -68,32 +68,17 @@ public class Main {
 
                             switch (sortChoice) {
                                 case "1":
-                                    sortedList.sort(new java.util.Comparator<StoreItem>() {
-                                        @Override
-                                        public int compare(StoreItem o1, StoreItem o2) {
-                                            return Double.compare(o1.getItem().getPrice(), o2.getItem().getPrice());
-                                        }
-                                    });
+                                    sortedList.sort((o1, o2) -> Double.compare(o1.getItem().getPrice(), o2.getItem().getPrice()));
                                     printList(sortedList, "За ціною");
                                     break;
 
                                 case "2":
-                                    sortedList.sort(new java.util.Comparator<StoreItem>() {
-                                        @Override
-                                        public int compare(StoreItem o1, StoreItem o2) {
-                                            return o1.getItem().getBrand().compareTo(o2.getItem().getBrand());
-                                        }
-                                    });
+                                    sortedList.sort((o1, o2) -> o1.getItem().getBrand().compareTo(o2.getItem().getBrand()));
                                     printList(sortedList, "За брендом");
                                     break;
 
                                 case "3":
-                                    sortedList.sort(new java.util.Comparator<StoreItem>() {
-                                        @Override
-                                        public int compare(StoreItem o1, StoreItem o2) {
-                                            return o1.getItem().getType().compareTo(o2.getItem().getType());
-                                        }
-                                    });
+                                    sortedList.sort((o1, o2) -> o1.getItem().getType().compareTo(o2.getItem().getType()));
                                     printList(sortedList, "За типом");
                                     break;
 
