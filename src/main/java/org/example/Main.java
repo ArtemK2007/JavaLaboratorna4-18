@@ -28,7 +28,9 @@ public class Main {
             System.out.println("2. Додати новий товар (надходження на склад)");
             System.out.println("3. Вивести весь інвентар");
             System.out.println("4. Вивести відсортовану інформацію про всі товари");
-            System.out.println("5. Завершити роботу програми (із збереженням)");
+            System.out.println("5. Модифікувати товар (update)");
+            System.out.println("6. Видалити товар (delete)");
+            System.out.println("7. Завершити роботу програми (із збереженням)");
             System.out.print("Оберіть пункт меню: ");
 
             String choice = scanner.nextLine().trim();
@@ -89,13 +91,19 @@ public class Main {
                     }
                     break;
                 case "5":
+                    handleUpdateMenu(scanner, store);
+                    break;
+                case "6":
+                    handleDeleteMenu(scanner, store);
+                    break;
+                case "7":
                     FileStorage.saveToTxt(store, "input.txt");
                     FileStorage.saveToJson(store, "input.json");
                     System.out.println("Дані успішно збережено. Завершення роботи програми...");
                     running = false;
                     break;
                 default:
-                    System.out.println("Некоректний вибір. Будь ласка, введіть число від 1 до 5.");
+                    System.out.println("Некоректний вибір. Будь ласка, введіть число від 1 до 7.");
                     break;
             }
         }
@@ -221,6 +229,109 @@ public class Main {
             System.out.println("Помилка: Числові дані введені некоректно!");
         } catch (IllegalArgumentException e) {
             System.out.println("Помилка валідації: " + e.getMessage());
+        }
+    }
+
+    private static void handleUpdateMenu(Scanner scanner, Store store) {
+        if (store.getInventory().isEmpty()) {
+            System.out.println("Склад порожній. Немає що модифікувати.");
+            return;
+        }
+
+        System.out.print("Введіть UUID товару для модифікації: ");
+        String uuidStr = scanner.nextLine().trim();
+        StoreItem existingItem = store.searchByUuid(uuidStr);
+
+        if (existingItem == null) {
+            System.out.println("Товар із таким UUID не знайдено.");
+            return;
+        }
+
+        System.out.println("Знайдено товар: " + existingItem.toString());
+        System.out.println("\n--- Оберіть новий тип об'єкта ---");
+        System.out.println("1. Штани (Pants)");
+        System.out.println("2. Сорочка / Футболка (Shirts)");
+        System.out.println("3. Джинси (Jeans)");
+        System.out.println("4. Сорочка-поло (PoloShirt)");
+        System.out.println("0. Повернутися");
+        System.out.print("Ваш вибір: ");
+
+        String typeChoice = scanner.nextLine().trim();
+        if (typeChoice.equals("0")) return;
+
+        try {
+            Clothes newItem;
+            switch (typeChoice) {
+                case "1":
+                    String[] baseP = readBaseClothesData(scanner, "Штани");
+                    newItem = new Pants(baseP[0], ClothesSize.valueOf(baseP[1]), Double.parseDouble(baseP[2]), baseP[3], readWaistSize(scanner));
+                    break;
+                case "2":
+                    String[] baseS = readBaseClothesData(scanner, "Сорочка");
+                    newItem = new Shirts(baseS[0], ClothesSize.valueOf(baseS[1]), Double.parseDouble(baseS[2]), baseS[3], readLongSleeve(scanner));
+                    break;
+                case "3":
+                    String[] baseJ = readBaseClothesData(scanner, "Джинси");
+                    int waistJ = readWaistSize(scanner);
+                    System.out.print("Введіть тип крою джинсів (Slim, Regular, Wide): ");
+                    newItem = new Jeans(baseJ[0], ClothesSize.valueOf(baseJ[1]), Double.parseDouble(baseJ[2]), baseJ[3], waistJ, scanner.nextLine());
+                    break;
+                case "4":
+                    String[] basePo = readBaseClothesData(scanner, "Поло");
+                    boolean longSleevePo = readLongSleeve(scanner);
+                    System.out.print("Введіть кількість ґудзиків на комірці: ");
+                    newItem = new PoloShirt(basePo[0], ClothesSize.valueOf(basePo[1]), Double.parseDouble(basePo[2]), basePo[3], longSleevePo, Integer.parseInt(scanner.nextLine().trim()));
+                    break;
+                default:
+                    System.out.println("Невідомий тип об'єкта.");
+                    return;
+            }
+
+            System.out.print("Введіть нову кількість одиниць: ");
+            int newQuantity = Integer.parseInt(scanner.nextLine().trim());
+
+            boolean success = store.updateByUuid(uuidStr, newItem, newQuantity);
+            if (success) {
+                System.out.println("Товар успішно модифіковано!");
+            } else {
+                System.out.println("Помилка при модифікації товару.");
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("Помилка: Числові дані введені некоректно!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Помилка валідації: " + e.getMessage());
+        }
+    }
+
+    private static void handleDeleteMenu(Scanner scanner, Store store) {
+        if (store.getInventory().isEmpty()) {
+            System.out.println("Склад порожній. Немає що видаляти.");
+            return;
+        }
+
+        System.out.print("Введіть UUID товару для видалення: ");
+        String uuidStr = scanner.nextLine().trim();
+
+        StoreItem existingItem = store.searchByUuid(uuidStr);
+        if (existingItem == null) {
+            System.out.println("Товар із таким UUID не знайдено.");
+            return;
+        }
+
+        System.out.println("Знайдено товар: " + existingItem.toString());
+        System.out.print("Бажаєте видалити цей товар? (y/n): ");
+        String confirm = scanner.nextLine().trim().toLowerCase();
+
+        if (confirm.equals("y") || confirm.equals("yes") || confirm.equals("так")) {
+            boolean success = store.deleteByUuid(uuidStr);
+            if (success) {
+                System.out.println("Товар успішно видалено зі складу.");
+            } else {
+                System.out.println("Не вдалося видалити товар.");
+            }
+        } else {
+            System.out.println("Видалення скасовано.");
         }
     }
 
