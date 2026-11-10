@@ -1,16 +1,16 @@
 package org.example;
 
-import java.util.UUID; // ДОДАНО: імпорт UUID
+import java.util.UUID;
 
-public abstract class Clothes implements Comparable<Clothes>, Identifiable { // ДОДАНО: Identifiable
-    private UUID uuid; // ДОДАНО: поле UUID
+public abstract class Clothes implements Comparable<Clothes>, Identifiable {
+    private UUID uuid;
     private final String type;
     private final ClothesSize size;
     private final double price;
     private final String brand;
 
     public Clothes(String type, ClothesSize size, double price, String brand) {
-        this.uuid = UUID.randomUUID(); // ДОДАНО: автоматична генерація при створенні
+        this.uuid = UUID.randomUUID();
 
         if (price < 0) {
             throw new IllegalArgumentException("Ціна не може бути від'ємною!");
