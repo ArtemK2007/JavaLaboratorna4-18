@@ -1,12 +1,17 @@
 package org.example;
 
-public abstract class Clothes implements Comparable<Clothes> {
+import java.util.UUID; // ДОДАНО: імпорт UUID
+
+public abstract class Clothes implements Comparable<Clothes>, Identifiable { // ДОДАНО: Identifiable
+    private UUID uuid; // ДОДАНО: поле UUID
     private final String type;
     private final ClothesSize size;
     private final double price;
     private final String brand;
 
     public Clothes(String type, ClothesSize size, double price, String brand) {
+        this.uuid = UUID.randomUUID(); // ДОДАНО: автоматична генерація при створенні
+
         if (price < 0) {
             throw new IllegalArgumentException("Ціна не може бути від'ємною!");
         }
@@ -17,6 +22,15 @@ public abstract class Clothes implements Comparable<Clothes> {
         this.size = size;
         this.price = price;
         this.brand = brand;
+    }
+
+    @Override
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 
     public String getType() {
@@ -42,7 +56,7 @@ public abstract class Clothes implements Comparable<Clothes> {
 
     @Override
     public String toString() {
-        return type + "{size=" + size + ", price=" + price + ", brand='" + brand + "'}";
+        return "UUID=" + uuid + " | " + type + "{size=" + size + ", price=" + price + ", brand='" + brand + "'}";
     }
 
     @Override

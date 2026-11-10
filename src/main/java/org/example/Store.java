@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.UUID; // ДОДАНО: імпорт для роботи з UUID
 
 public class Store {
     private final String storeName;
@@ -37,7 +38,7 @@ public class Store {
         inventory.add(new StoreItem(cl, quantity));
     }
 
-    //МЕТОДИ ПОШУКУ
+    // МЕТОДИ ПОШУКУ
 
     public ArrayList<StoreItem> searchByBrand(String brand) {
         ArrayList<StoreItem> results = new ArrayList<>();
@@ -68,5 +69,19 @@ public class Store {
             }
         }
         return results;
+    }
+
+    public StoreItem searchByUuid(String uuidStr) {
+        try {
+            UUID targetUuid = UUID.fromString(uuidStr.trim());
+            for (StoreItem storeItem : inventory) {
+                if (storeItem.getItem().getUuid().equals(targetUuid)) {
+                    return storeItem;
+                }
+            }
+            return null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 }

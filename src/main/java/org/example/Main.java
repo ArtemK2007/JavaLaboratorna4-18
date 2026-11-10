@@ -23,11 +23,8 @@ public class Main {
         boolean running = true;
 
         while (running) {
-            System.out.println("\n=== " + store.getStoreName().toUpperCase() + " ===");
             System.out.println("1. Пошук товару");
-            System.out.println("2. Додати новий товар (надходження на склад)");
             System.out.println("3. Вивести весь інвентар");
-            System.out.println("4. Вивести відсортовану інформацію про всі товари (за ціною)");
             System.out.println("5. Завершити роботу програми (із збереженням)");
             System.out.print("Оберіть пункт меню: ");
 
@@ -56,11 +53,8 @@ public class Main {
                     } else {
                         boolean sortingMenu = true;
                         while (sortingMenu) {
-                            System.out.println("\n--- Оберіть критерій сортування ---");
                             System.out.println("1. Сортувати за ціною (зростанням)");
-                            System.out.println("2. Сортувати за брендом (алфавітом)");
                             System.out.println("3. Сортувати за типом товару");
-                            System.out.println("0. Повернутися в головне меню");
                             System.out.print("Ваш вибір: ");
 
                             String sortChoice = scanner.nextLine().trim();
@@ -95,11 +89,9 @@ public class Main {
                 case "5":
                     FileStorage.saveToTxt(store, "input.txt");
                     FileStorage.saveToJson(store, "input.json");
-                    System.out.println("Дані успішно збережено. Завершення роботи програми...");
                     running = false;
                     break;
                 default:
-                    System.out.println("Некоректний вибір. Будь ласка, введіть число від 1 до 5.");
                     break;
             }
         }
@@ -108,19 +100,17 @@ public class Main {
 
     private static void handleSearchMenu(Scanner scanner, Store store) {
         if (store.getInventory().isEmpty()) {
-            System.out.println("Склад порожній. Немає чого шукати.");
             return;
         }
 
         System.out.println("\n--- Оберіть критерій пошуку ---");
-        System.out.println("1. За брендом");
         System.out.println("2. За розміром");
         System.out.println("3. За діапазоном ціни");
         System.out.println("0. Повернутися до головного меню");
         System.out.print("Ваш вибір: ");
 
         String choice = scanner.nextLine().trim();
-        ArrayList<StoreItem> results;
+        ArrayList<StoreItem> results = new ArrayList<>();
 
         switch (choice) {
             case "1":
@@ -132,7 +122,6 @@ public class Main {
                 try {
                     results = store.searchBySize(ClothesSize.valueOf(scanner.nextLine().trim().toUpperCase()));
                 } catch (IllegalArgumentException e) {
-                    System.out.println("Помилка: введено некоректний розмір!");
                     return;
                 }
                 break;
@@ -144,19 +133,26 @@ public class Main {
                     double max = Double.parseDouble(scanner.nextLine().trim());
                     results = store.searchByPriceRange(min, max);
                 } catch (NumberFormatException e) {
-                    System.out.println("Помилка: ціна має бути числом!");
                     return;
+                }
+                break;
+            case "4":
+                System.out.print("Введіть UUID для пошуку: ");
+                StoreItem foundItem = store.searchByUuid(scanner.nextLine().trim());
+                if (foundItem != null) {
+                    results.add(foundItem);
                 }
                 break;
             case "0":
                 return;
             default:
-                System.out.println("Невідомий критерій.");
                 return;
         }
 
         if (results.isEmpty()) {
-            System.out.println("За вказаним критерієм товарів не знайдено.");
+            if (!choice.equals("4")) {
+                System.out.println("За вказаним критерієм товарів не знайдено.");
+            }
         } else {
             System.out.println("\n--- Результати пошуку (" + results.size() + " шт.) ---");
             for (int i = 0; i < results.size(); i++) {
@@ -167,11 +163,8 @@ public class Main {
 
     private static void handleCreateMenu(Scanner scanner, Store store) {
         System.out.println("\n--- Оберіть тип об'єкта для створення ---");
-        System.out.println("1. Штани (Pants)");
         System.out.println("2. Сорочка / Футболка (Shirts)");
-        System.out.println("3. Джинси (Jeans)");
         System.out.println("4. Сорочка-поло (PoloShirt)");
-        System.out.println("0. Повернутися до головного меню");
         System.out.print("Ваш вибір: ");
 
         String typeChoice = scanner.nextLine().trim();
@@ -201,7 +194,6 @@ public class Main {
                     newItem = new PoloShirt(basePo[0], ClothesSize.valueOf(basePo[1]), Double.parseDouble(basePo[2]), basePo[3], longSleevePo, Integer.parseInt(scanner.nextLine().trim()));
                     break;
                 default:
-                    System.out.println("Невідомий тип об'єкта.");
                     return;
             }
 
