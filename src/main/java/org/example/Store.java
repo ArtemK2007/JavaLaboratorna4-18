@@ -25,7 +25,7 @@ public class Store {
      */
     public void addNewClothes(Clothes cl, int quantity) {
         if (quantity <= 0) {
-            throw new IllegalArgumentException("Кількість має бути більшою за 0.");
+            throw new InvalidFieldValueException("Кількість має бути більшою за 0.");
         }
 
         for (StoreItem storeItem : inventory) {
@@ -86,25 +86,31 @@ public class Store {
     }
 
     /**
-     * Завдання 1 (ЛР №17): Оновлення об'єкта в колекції зі збереженням оригінального UUID.
+     * Завдання 1 (ЛР №17-18): Оновлення об'єкта в колекції зі збереженням оригінального UUID.
      */
     public boolean update(StoreItem existingItem, StoreItem newItem) {
         int index = inventory.indexOf(existingItem);
-        if (index != -1 && newItem != null) {
-            newItem.getItem().setUuid(existingItem.getItem().getUuid());
-            inventory.set(index, newItem);
-            return true;
+        if (index == -1) {
+            throw new ObjectNotFoundException("Товар для оновлення не знайдено на складі.");
         }
-        return false;
+        if (newItem == null) {
+            throw new InvalidFieldValueException("Новий об'єкт товару не може бути null.");
+        }
+        newItem.getItem().setUuid(existingItem.getItem().getUuid());
+        inventory.set(index, newItem);
+        return true;
     }
 
     /**
-     * Допоміжний метод оновлення за UUID (зручно для консолі).
+     * Допоміжний метод оновлення за UUID із використанням кастомних винятків.
      */
     public boolean updateByUuid(String uuidStr, Clothes newClothes, int newQuantity) {
+        if (newQuantity <= 0) {
+            throw new InvalidFieldValueException("Кількість має бути більшою за 0.");
+        }
         StoreItem existing = searchByUuid(uuidStr);
         if (existing == null) {
-            return false;
+            throw new ObjectNotFoundException("Товар із таким UUID (" + uuidStr + ") не знайдено.");
         }
         newClothes.setUuid(existing.getItem().getUuid());
         int index = inventory.indexOf(existing);
@@ -113,21 +119,24 @@ public class Store {
     }
 
     /**
-     * Завдання 2 (ЛР №17): Видалення об'єкта StoreItem з колекції.
+     * Завдання 2 (ЛР №17-18): Видалення об'єкта StoreItem з колекції.
      */
     public boolean delete(StoreItem storeItem) {
-        return inventory.remove(storeItem);
+        boolean removed = inventory.remove(storeItem);
+        if (!removed) {
+            throw new ObjectNotFoundException("Нічого видаляти: вказаний об'єкт не знайдено у колекції.");
+        }
+        return true;
     }
 
     /**
-     * Зручний метод видалення за UUID (для консольного меню).
+     * Зручний метод видалення за UUID з викиданням ObjectNotFoundException.
      */
     public boolean deleteByUuid(String uuidStr) {
-        try {
-            UUID targetUuid = UUID.fromString(uuidStr.trim());
-            return inventory.removeIf(storeItem -> storeItem.getItem().getUuid().equals(targetUuid));
-        } catch (IllegalArgumentException e) {
-            return false;
+        StoreItem existing = searchByUuid(uuidStr);
+        if (existing == null) {
+            throw new ObjectNotFoundException("Нічого видаляти: товар із UUID (" + uuidStr + ") не знайдено.");
         }
+        return inventory.remove(existing);
     }
 }
