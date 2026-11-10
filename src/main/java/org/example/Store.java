@@ -111,4 +111,23 @@ public class Store {
         inventory.set(index, new StoreItem(newClothes, newQuantity));
         return true;
     }
+
+    /**
+     * Завдання 2 (ЛР №17): Видалення об'єкта StoreItem з колекції.
+     */
+    public boolean delete(StoreItem storeItem) {
+        return inventory.remove(storeItem);
+    }
+
+    /**
+     * Зручний метод видалення за UUID (для консольного меню).
+     */
+    public boolean deleteByUuid(String uuidStr) {
+        try {
+            UUID targetUuid = UUID.fromString(uuidStr.trim());
+            return inventory.removeIf(storeItem -> storeItem.getItem().getUuid().equals(targetUuid));
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
 }
