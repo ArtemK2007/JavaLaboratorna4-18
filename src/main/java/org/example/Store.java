@@ -1,7 +1,7 @@
 package org.example;
 
 import java.util.ArrayList;
-import java.util.UUID; // ДОДАНО: імпорт для роботи з UUID
+import java.util.UUID;
 
 public class Store {
     private final String storeName;
@@ -83,5 +83,32 @@ public class Store {
         } catch (IllegalArgumentException e) {
             return null;
         }
+    }
+
+    /**
+     * Завдання 1 (ЛР №17): Оновлення об'єкта в колекції зі збереженням оригінального UUID.
+     */
+    public boolean update(StoreItem existingItem, StoreItem newItem) {
+        int index = inventory.indexOf(existingItem);
+        if (index != -1 && newItem != null) {
+            newItem.getItem().setUuid(existingItem.getItem().getUuid());
+            inventory.set(index, newItem);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Допоміжний метод оновлення за UUID (зручно для консолі).
+     */
+    public boolean updateByUuid(String uuidStr, Clothes newClothes, int newQuantity) {
+        StoreItem existing = searchByUuid(uuidStr);
+        if (existing == null) {
+            return false;
+        }
+        newClothes.setUuid(existing.getItem().getUuid());
+        int index = inventory.indexOf(existing);
+        inventory.set(index, new StoreItem(newClothes, newQuantity));
+        return true;
     }
 }
